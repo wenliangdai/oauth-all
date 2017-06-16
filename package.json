@@ -1,0 +1,22 @@
+{
+  "name": "oauth-all",
+  "version": "1.0.0",
+  "description": "an oauth client which can support all oauth provider by adding plugins",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/melonHuang/oauth-all.git"
+  },
+  "keywords": [
+    "oauth"
+  ],
+  "author": "melonHuang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/melonHuang/oauth-all/issues"
+  },
+  "homepage": "https://github.com/melonHuang/oauth-all#readme"
+}
