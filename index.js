@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 class OAuthAll {
   /**
    * 构造函数
@@ -5,30 +7,32 @@ class OAuthAll {
    * {
    *    // 针对使用的每个插件的配置
    *    weibo: {
-   *      app_id: '',
-   *      app_secret: ''
+   *      client_id: '',
+   *      client_secret: ''
    *    },
    *    qq: {}
    * }
    */
-   constructor(config, plugins) {
-     this.config = config
-     this.plugins = {}
-     Object.keys(plugins).forEach(pluginName => {
-       const Plugin = plugins[pluginName]
-       this.plugins[pluginName] = new Plugin(config[pluginName])
-     })
+   constructor(plugins) {
+     this.plugins = plugins
    }
 
    async getUserInfo(pluginName, req, res) {
-     const rdurl = this.getRdUrl(req)
+     const reqUrl = this.getReqUrl(req)
      const plugin = this.plugins[pluginName]
-     const oauthUrl = await plugin.getAuthUrl(rdurl)
-     this.redirect(res, oauthUrl)
+
+     if(plugin.hasCode(reqUrl)) {
+       const accessTokenRes = await plugin.getAccessToken(Object.assign(qs.parse(reqUrl), {rdUrl: reqUrl}))
+       const userInfoRes = await plugin.getUserInfo(accessTokenRes)
+       return userInfoRes
+     } else {
+       const authUrl = await plugin.getAuthUrl({rdUrl: reqUrl})
+       this.redirect(res, authUrl)
+    }
    }
 
-   getRdUrl() {
-     const url = 'http://' + this.req.headers.host + this.req.url
+   getReqUrl(req) {
+     const url = 'http://' + req.headers.host + req.url
      return url
    }
 
@@ -40,14 +44,5 @@ class OAuthAll {
 }
 
 
-const weiboPlugin = require('./lib/oauth-plugin-weibo')
-const oauth = new OAuthAll({
-  weibo: {
-    app_id: '913357886',
-    app_secret: 'b1005bd438ab787007f1b0a097a3ee1f'
-  }
-}, {
-  weibo: WeiboPlugin
-})
 
 export default OAuthAll
