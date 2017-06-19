@@ -23,12 +23,13 @@ class OAuthAll {
 
      if(plugin.hasCode(reqUrl)) {
        const accessTokenRes = await plugin.getAccessToken(Object.assign(qs.parse(reqUrl), {rdUrl: reqUrl}))
-       const userInfoRes = await plugin.getUserInfo(accessTokenRes)
-       return userInfoRes
+       console.log(accessTokenRes)
+      //  const userInfoRes = await plugin.getUserInfo(accessTokenRes)
+      //  return userInfoRes
      } else {
        const authUrl = await plugin.getAuthUrl({rdUrl: reqUrl})
        this.redirect(res, authUrl)
-    }
+     }
    }
 
    getReqUrl(req) {
