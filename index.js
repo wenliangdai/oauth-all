@@ -17,15 +17,16 @@ class OAuthAll {
      this.plugins = plugins
    }
 
-   async getUserInfo(pluginName, req, res) {
+   async getUserInfo(pluginName, req, res, ctx) {
      const reqUrl = this.getReqUrl(req)
      const plugin = this.plugins[pluginName]
 
-     if(plugin.hasCode(reqUrl)) {
-       const accessTokenRes = await plugin.getAccessToken(Object.assign(qs.parse(reqUrl), {rdUrl: reqUrl}))
-       console.log(accessTokenRes)
-      //  const userInfoRes = await plugin.getUserInfo(accessTokenRes)
-      //  return userInfoRes
+     const query_obj = ctx.query;
+
+     if(query_obj.code) {
+       const accessTokenRes = await plugin.getAccessToken(Object.assign(query_obj, {rdUrl: reqUrl}))
+       const userInfoRes = await plugin.getUserInfo(accessTokenRes)
+       return userInfoRes
      } else {
        const authUrl = await plugin.getAuthUrl({rdUrl: reqUrl})
        this.redirect(res, authUrl)

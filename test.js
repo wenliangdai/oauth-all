@@ -2,6 +2,7 @@ import OAuthAll from './index.js'
 import OAuthPluginWeibo from './lib/oauth-plugin-weibo'
 import OAuthPluginQq from './lib/oauth-plugin-qq'
 import OAuthPluginGithub from './lib/oauth-plugin-github'
+import OAuthPluginWechat from './lib/oauth-plugin-wechat'
 
 const oauth = new OAuthAll({
   weibo: new OAuthPluginWeibo({
@@ -15,6 +16,11 @@ const oauth = new OAuthAll({
   github: new OAuthPluginGithub({
     app_id: "b14db52131eb32c2495b",
     app_secret: "0df440743c7ff6819dc9cfe881b74ca22d4f091a",
+    user_agent: "@zcfy" // This is required by GitHub when getting userInfo with access_token. This value should be included in header "User-Agent"
+  }),
+  wechat: new OAuthPluginWechat({
+    app_id: "wxa12dbe0ddc354603",
+    app_secret: "f07edde0b3e76b3f93dc3a5fce4d33ea"
   })
 })
 
@@ -23,9 +29,9 @@ const app = new Koa();
 
 app.use(async ctx => {
   const url = ctx.request.req.url
-  const userInfo = await oauth.getUserInfo('github', ctx.request.req, ctx.response.res)
-  // ctx.body = JSON.stringify(userInfo)
-  // console.log(33, url, userInfo)
+  const userInfo = await oauth.getUserInfo('wechat', ctx.request.req, ctx.response.res, ctx)
+  ctx.body = JSON.stringify(userInfo)
+  console.log(33, url, userInfo)
 });
 
 app.listen(3000);
