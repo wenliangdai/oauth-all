@@ -17,14 +17,13 @@ class OAuthAll {
      this.plugins = plugins
    }
 
-   async getUserInfo(pluginName, req, res, ctx) {
+   async getUserInfo(pluginName, req, res) {
      const reqUrl = this.getReqUrl(req)
      const plugin = this.plugins[pluginName]
+     const querystring = this.getQueryString(req.url)
 
-     const query_obj = ctx.query;
-
-     if(query_obj.code) {
-       const accessTokenRes = await plugin.getAccessToken(Object.assign(query_obj, {rdUrl: reqUrl}))
+     if(plugin.hasCode(querystring)) {
+       const accessTokenRes = await plugin.getAccessToken(Object.assign(qs.parse(querystring), {rdUrl: reqUrl}))
        const userInfoRes = await plugin.getUserInfo(accessTokenRes)
        return userInfoRes
      } else {
@@ -42,6 +41,14 @@ class OAuthAll {
      res.statusCode = '302'
      res.setHeader('Location', url)
      res.end()
+   }
+
+   /**
+    * @return querystring in a req.url (nodejs vanilla request.url)
+    * E.g. getQueryString('/a/b/?code=CODE&state=STATE') returns 'code=CODE&state=STATE'
+    */
+   getQueryString(url) {
+     return url.split('?')[1];
    }
 }
 

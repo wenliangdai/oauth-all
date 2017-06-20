@@ -29,7 +29,7 @@ const app = new Koa();
 
 app.use(async ctx => {
   const url = ctx.request.req.url
-  const userInfo = await oauth.getUserInfo('wechat', ctx.request.req, ctx.response.res, ctx)
+  const userInfo = await oauth.getUserInfo('weibo', ctx.request.req, ctx.response.res, ctx)
   ctx.body = JSON.stringify(userInfo)
   console.log(33, url, userInfo)
 });
